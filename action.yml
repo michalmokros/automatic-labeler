@@ -1,13 +1,14 @@
-name: 'Hello World'
-description: 'Greet someone and record the time'
+name: 'Pull Request Labeler'
+description: 'Automatically label Pull Requests based on matching title prefix with configuration setup and base branch.'
+author: 'Michal Mokros'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
-    required: true
-    default: 'World'
-outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+  configuration-path:
+    description: 'The path for the configuration of labels, default is .github/pull-request-labeler-config.yml'
+    required: false
+    default: '.github/pull-request-labeler-config.yml'
+branding:
+  icon: 'flag'
+  color: 'purple'
 runs:
   using: 'node12'
   main: 'index.js'

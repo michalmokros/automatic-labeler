@@ -1,15 +1,19 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
+const core = require("@actions/core");
+const github = require("@actions/github");
+// const yaml = require("js-yaml");
 
-try {
-  // `who-to-greet` input defined in action metadata file
-  const nameToGreet = core.getInput('who-to-greet');
-  console.log(`Hello ${nameToGreet}!`);
-  const time = (new Date()).toTimeString();
-  core.setOutput("time", time);
-  // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload}`);
-} catch (error) {
-  core.setFailed(error.message);
+async function run() {
+  try {
+    const github_token = process.env.GITHUB_TOKEN;
+    const octokit = github.getOctokit((token = github_token));
+
+    // if (!github.context.payload.pull_request) {
+    //   throw new Error(`Payload doesn't contain 'pull_request'.`)
+    // }
+
+    const payload = JSON.stringify(github.context.payload, undefined, 2);
+    console.log(`The payload: ${payload}`);
+  } catch (error) {
+    core.setFailed(error.message);
+  }
 }
