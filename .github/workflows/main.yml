@@ -1,15 +1,15 @@
-on: [push]
+name: 'Pull Request Labeler'
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
 
 jobs:
-  hello_world_job:
+  pr_labeler:
     runs-on: ubuntu-latest
-    name: A job to say hello
+    name: Labeling Pull Request
     steps:
     - name: Hello world action step
       id: hello
-      uses: michalmokros/automatic-labeler@b70cf2e493d5403b57acee19780a5f3685a25a87
-      with:
-        who-to-greet: 'Michal Mokros'
-    # Use the output from the `hello` step
-    - name: Get the output time
-      run: echo "The time was ${{ steps.hello.outputs.time }}"
+      uses: michalmokros/pull-request-labeler@fc8270502f1d007da2f7f95b9227dec34b23ed84
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
