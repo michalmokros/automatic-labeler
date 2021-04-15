@@ -58,7 +58,7 @@ async function run() {
 
 async function getConfig(github, path, { owner, repo }, ref) {
   try {
-    const response = await github.repos.getContents({
+    const response = await github.repos.getContent({
       owner,
       repo,
       path,
