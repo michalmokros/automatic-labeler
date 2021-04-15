@@ -1,6 +1,5 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
-const { context } = require("@actions/github/lib/utils");
 const yaml = require("js-yaml");
 const matcher = require("matcher");
 
@@ -46,7 +45,7 @@ async function run() {
     if (labels) {
       await octokit.issues.addLabels({
         ...github.context.repo,
-        number: context.payload.pull_request.number,
+        number: github.context.payload.pull_request.number,
         labels,
       });
     } else {
