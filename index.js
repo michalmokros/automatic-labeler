@@ -39,7 +39,17 @@ async function run() {
     );
     core.info(`Loaded config: ${JSON.stringify(config, null, 2)}`);
 
-    const labels = getLabels(config, baseBranch, title);
+    const labels = []
+    for (const [key, value] of Object.defineProperties(config)) {
+      if (Array.isArray(value) ? matcher.isMatch(title, ...value) : matcher.isMatch(title, value)) {
+        labels.push(key)
+      }
+    }
+
+    if (!baseBranches.includes(baseBranch)) {
+      labels.push(inPRChainLabel);
+    }
+
     core.info(`Adding Labels: ${labels}`);
 
     if (labels) {
@@ -66,30 +76,11 @@ async function getConfig(github, path, { owner, repo }, ref) {
     });
 
     return (
-      yaml.load(Buffer.from(response.data.content, "base64").toString()) ||
-      {}
+      yaml.load(Buffer.from(response.data.content, "base64").toString()) || {}
     );
   } catch (error) {
     core.setFailed(error.message);
   }
-}
-
-function getLabels(config, baseBranch, title) {
-  const labels = Object.entries(config).reduce((labels, [label, patterns]) => {
-    if (
-      Array.isArray(patterns)
-        ? patterns.some((pattern) => matcher.isMatch(title, pattern))
-        : matcher.isMatch(title, patterns)
-    ) {
-      labels.push(label);
-    }
-  }, []);
-
-  if (!baseBranches.includes(baseBranch)) {
-    labels.push(inPRChainLabel);
-  }
-
-  return labels;
 }
 
 run();
