@@ -39,10 +39,14 @@ async function run() {
     );
     core.info(`Loaded config: ${JSON.stringify(config, null, 2)}`);
 
-    const labels = []
-    for (const [key, value] of Object.defineProperties(config)) {
-      if (Array.isArray(value) ? matcher.isMatch(title, ...value) : matcher.isMatch(title, value)) {
-        labels.push(key)
+    const labels = [];
+    for (const [key, value] of Object.entries(config)) {
+      if (
+        Array.isArray(value)
+          ? matcher.isMatch(title, ...value)
+          : matcher.isMatch(title, value)
+      ) {
+        labels.push(key);
       }
     }
 
