@@ -10,6 +10,6 @@ jobs:
     steps:
     - name: Applying labels to Pull Request
       id: labeling-pr
-      uses: michalmokros/pull-request-labeler@f3c6c4d68ed4a964cb6194a101124a98c7d170e8
+      uses: michalmokros/pull-request-labeler@main
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
