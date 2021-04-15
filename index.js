@@ -14,7 +14,7 @@ async function run() {
     }
 
     const github_token = process.env.GITHUB_TOKEN;
-    const octokit = github.getOctokit((token = github_token));
+    const octokit = new github.GitHub(github_token);
     const configPath = core.getInput("configuration-path", { required: true });
 
     if (!configPath) {
@@ -50,9 +50,10 @@ async function run() {
     }
 
     core.info(`Adding Labels: ${labels}`);
+    core.info(github.context.repo.owner,github.context.repo.repo,github.context.payload.pull_request.number,labels)
 
     if (labels) {
-      await octokit.rest.issues.addLabels({
+      await octokit.issues.addLabels({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         number: github.context.payload.pull_request.number,
