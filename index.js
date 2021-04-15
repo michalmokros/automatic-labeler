@@ -41,6 +41,7 @@ async function run() {
 
     const labels = [];
     for (const [key, value] of Object.entries(config)) {
+      console.log('key and value', key, value)
       if (
         Array.isArray(value)
           ? matcher.isMatch(title, ...value)
