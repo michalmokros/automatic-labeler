@@ -4,3 +4,4 @@ console.log("Third try with good function name");
 console.log("Fourth try with load");
 console.log("Fifth try with load");
 console.log("Sixth try with load");
+console.log("Seventh try with load");
