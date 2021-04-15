@@ -52,15 +52,17 @@ async function run() {
     core.info(`Adding Labels: ${labels}`);
 
     if (labels) {
-      await octokit.issues.addLabels({
-        ...github.context.repo,
+      await octokit.rest.issues.addLabels({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
         number: github.context.payload.pull_request.number,
-        labels,
+        labels: labels,
       });
     } else {
       core.info("No assignable labels were detected.");
     }
   } catch (error) {
+    core.error(error)
     core.setFailed(error.message);
   }
 }
