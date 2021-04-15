@@ -66,7 +66,7 @@ async function getConfig(github, path, { owner, repo }, ref) {
     });
 
     return (
-      yaml.safeLoad(Buffer.from(response.data.content, "base64").toString()) ||
+      yaml.load(Buffer.from(response.data.content, "base64").toString()) ||
       {}
     );
   } catch (error) {
