@@ -1,0 +1,15 @@
+on: [push]
+
+jobs:
+  hello_world_job:
+    runs-on: ubuntu-latest
+    name: A job to say hello
+    steps:
+    - name: Hello world action step
+      id: hello
+      uses: michalmokros/automatic-labeler@b70cf2e493d5403b57acee19780a5f3685a25a87
+      with:
+        who-to-greet: 'Michal Mokros'
+    # Use the output from the `hello` step
+    - name: Get the output time
+      run: echo "The time was ${{ steps.hello.outputs.time }}"
