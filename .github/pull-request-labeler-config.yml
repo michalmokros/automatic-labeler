@@ -1,2 +1,2 @@
-feature: [ 'feat(*', 'feat:*' ]
-fix: [ 'fix(*', 'feat:*' ]
+feature: 'feat[(|:]'
+fix: 'fix[(|:]'
