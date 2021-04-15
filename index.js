@@ -37,7 +37,7 @@ async function run() {
       github.context.repo,
       github.context.payload.pull_request.head.ref
     );
-    core.info(`Loaded config: ${config}`);
+    core.info(`Loaded config: ${JSON.stringify(config, null, 2)}`);
 
     const labels = getLabels(config, baseBranch, title);
     core.info(`Adding Labels: ${labels}`);
