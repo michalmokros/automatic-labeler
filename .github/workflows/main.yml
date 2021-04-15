@@ -6,10 +6,10 @@ on:
 jobs:
   pr_labeler:
     runs-on: ubuntu-latest
-    name: Labeling Pull Request
+    name: Pull Request Labeling
     steps:
-    - name: Hello world action step
-      id: hello
+    - name: Applying labels to Pull Request
+      id: labeling-pr
       uses: michalmokros/pull-request-labeler@fc8270502f1d007da2f7f95b9227dec34b23ed84
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
