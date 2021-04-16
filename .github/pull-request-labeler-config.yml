@@ -1,2 +1,7 @@
-feature: 'feat[(|:]'
-fix: 'fix[(|:]'
+labels:
+  feature: 'feat[(|:]'
+  fix: 'fix[(|:]'
+
+base: 
+  branches: ['master']
+  labels: ['in PR chain']

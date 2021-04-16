@@ -2,9 +2,6 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 const yaml = require("js-yaml");
 
-const baseBranches = ["master", "main"];
-const inPRChainLabel = "In PR Chain";
-
 async function run() {
   try {
     if (!github.context.payload.pull_request) {
@@ -39,18 +36,29 @@ async function run() {
     core.info(`Loaded config: ${JSON.stringify(config, null, 2)}`);
 
     const labels = [];
-    for (const [key, value] of Object.entries(config)) {
+    for (const [key, value] of Object.entries(config.labels)) {
       if (title.match(new RegExp("^" + value, "g"))) {
         labels.push(key);
       }
     }
 
-    if (!baseBranches.includes(baseBranch)) {
-      labels.push(inPRChainLabel);
+    if (config.base) {
+      core.info(`Base branch specified, adding chain labels. ${JSON.stringify(config.base, null, 2)}`)
+      const { branches: baseBranches, labels: baseLabels } = config.base;
+
+      if (!baseBranches.includes(baseBranch)) {
+        baseLabels.forEach((baseLabel) => labels.push(baseLabel));
+      }
     }
 
+
     core.info(`Adding Labels: ${labels}`);
-    core.info(github.context.repo.owner,github.context.repo.repo,github.context.payload.pull_request.number,labels)
+    core.info(
+      github.context.repo.owner,
+      github.context.repo.repo,
+      github.context.payload.pull_request.number,
+      labels
+    );
 
     if (labels) {
       await octokit.issues.addLabels({
@@ -63,7 +71,7 @@ async function run() {
       core.info("No assignable labels were detected.");
     }
   } catch (error) {
-    core.error(error)
+    core.error(error);
     core.setFailed(error.message);
   }
 }
@@ -83,6 +91,13 @@ async function getConfig(github, path, { owner, repo }, ref) {
   } catch (error) {
     core.setFailed(error.message);
   }
+}
+
+function loadBase(base) {
+  return {
+    baseBranches: base.branch,
+    baseLabels: base.labels,
+  };
 }
 
 run();
