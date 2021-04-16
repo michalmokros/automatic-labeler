@@ -52,7 +52,7 @@ async function run() {
       }
     }
 
-    const currentLabels = await octokit.issues.listLabelsOnIssue({
+    let currentLabels = await octokit.issues.listLabelsOnIssue({
       issue_number: github.context.payload.pull_request.number,
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
