@@ -69,6 +69,7 @@ async function run() {
 
     core.info(`Current Labels: ${JSON.stringify(currentLabels, null, 2)}`);
     core.info(`Default Labels: ${JSON.stringify(defaultLabels, null, 2)}`);
+    core.info(`New Labels: ${JSON.stringify(labels, null, 2)}`);
     const newLabels = currentLabels
       .filter((currentLabel) => !labels.includes(currentLabel))
       .filter((newLabel) => !defaultLabels.includes(newLabel));
@@ -105,13 +106,6 @@ async function getConfig(github, path, { owner, repo }, ref) {
   } catch (error) {
     core.setFailed(error.message);
   }
-}
-
-function loadBase(base) {
-  return {
-    baseBranches: base.branch,
-    baseLabels: base.labels,
-  };
 }
 
 run();
