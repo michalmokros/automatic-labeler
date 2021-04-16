@@ -58,7 +58,7 @@ async function run() {
       repo: github.context.repo.repo,
     })
 
-    core.info(`Current Labels: ${currentLabels}`);
+    core.info(`Current Labels: ${JSON.stringify(currentLabels, null, 2)}`);
     core.info(`Adding Labels: ${labels}`);
 
     if (labels) {
