@@ -58,6 +58,8 @@ async function run() {
       repo: github.context.repo.repo,
     })
 
+    currentLabels = currentLabels.data.map(entry => entry.name)
+
     core.info(`Current Labels: ${JSON.stringify(currentLabels, null, 2)}`);
     core.info(`Adding Labels: ${labels}`);
 
