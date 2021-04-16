@@ -5,3 +5,4 @@ console.log("Fourth try with load");
 console.log("Fifth try with load");
 console.log("Sixth try with load");
 console.log("First try with new load");
+console.log("Running again");
