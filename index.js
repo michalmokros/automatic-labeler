@@ -46,6 +46,7 @@ async function run() {
     if (config.base) {
       core.info(`Base branch specified, adding chain labels. ${JSON.stringify(config.base, null, 2)}`)
       const { branches: baseBranches, labels: baseLabels } = config.base;
+      defaultLabels.push(...baseLabels)
 
       if (!baseBranches.includes(baseBranch)) {
         baseLabels.forEach((baseLabel) => labels.push(baseLabel));
