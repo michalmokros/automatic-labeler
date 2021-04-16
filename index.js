@@ -36,7 +36,7 @@ async function run() {
     core.info(`Loaded config: ${JSON.stringify(config, null, 2)}`);
 
     const labels = [];
-    const defaultLabels = Object.keys(config.labels)
+    const defaultLabels = Object.keys(config.labels);
     for (const [key, value] of Object.entries(config.labels)) {
       if (title.match(new RegExp("^" + value, "g"))) {
         labels.push(key);
@@ -44,9 +44,15 @@ async function run() {
     }
 
     if (config.base) {
-      core.info(`Base branch specified, adding chain labels. ${JSON.stringify(config.base, null, 2)}`)
+      core.info(
+        `Base branch specified, adding chain labels. ${JSON.stringify(
+          config.base,
+          null,
+          2
+        )}`
+      );
       const { branches: baseBranches, labels: baseLabels } = config.base;
-      defaultLabels.push(...baseLabels)
+      defaultLabels.push(...baseLabels);
 
       if (!baseBranches.includes(baseBranch)) {
         baseLabels.forEach((baseLabel) => labels.push(baseLabel));
@@ -57,19 +63,23 @@ async function run() {
       issue_number: github.context.payload.pull_request.number,
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
-    })
+    });
 
-    currentLabels = currentLabels.data.map(entry => entry.name)
+    currentLabels = currentLabels.data.map((entry) => entry.name);
 
     core.info(`Current Labels: ${JSON.stringify(currentLabels, null, 2)}`);
-    core.info(`Adding Labels: ${labels}`);
+    core.info(`Default Labels: ${JSON.stringify(defaultLabels, null, 2)}`);
+    const newLabels = currentLabels
+      .filter((currentLabel) => !labels.includes(currentLabel))
+      .filter((newLabel) => !defaultLabels.includes(newLabel));
+    core.info(`Adding Labels: ${newLabels}`);
 
-    if (labels) {
+    if (newLabels) {
       await octokit.issues.addLabels({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         issue_number: github.context.payload.pull_request.number,
-        labels: labels,
+        labels: newLabels,
       });
     } else {
       core.info("No assignable labels were detected.");
