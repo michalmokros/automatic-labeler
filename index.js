@@ -36,6 +36,7 @@ async function run() {
     core.info(`Loaded config: ${JSON.stringify(config, null, 2)}`);
 
     const labels = [];
+    const defaultLabels = Object.keys(config.labels)
     for (const [key, value] of Object.entries(config.labels)) {
       if (title.match(new RegExp("^" + value, "g"))) {
         labels.push(key);
@@ -51,14 +52,14 @@ async function run() {
       }
     }
 
+    const currentLabels = await octokit.issues.listLabelsOnIssue({
+      issue_number: github.context.payload.pull_request.number,
+      owner: github.context.repo.owner,
+      repo: github.context.repo.repo,
+    })
 
+    core.info(`Current Labels: ${currentLabels}`);
     core.info(`Adding Labels: ${labels}`);
-    core.info(
-      github.context.repo.owner,
-      github.context.repo.repo,
-      github.context.payload.pull_request.number,
-      labels
-    );
 
     if (labels) {
       await octokit.issues.addLabels({
