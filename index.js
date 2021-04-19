@@ -1,6 +1,7 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
 const yaml = require("js-yaml");
+const _ = require("lodash");
 
 async function run() {
   try {
@@ -35,11 +36,11 @@ async function run() {
     );
     core.info(`Loaded config: ${JSON.stringify(config, null, 2)}`);
 
-    const labels = [];
+    const newLabels = [];
     const defaultLabels = Object.keys(config.labels);
     for (const [key, value] of Object.entries(config.labels)) {
       if (title.match(new RegExp("^" + value, "g"))) {
-        labels.push(key);
+        newLabels.push(key);
       }
     }
 
@@ -55,7 +56,7 @@ async function run() {
       defaultLabels.push(...baseLabels);
 
       if (!baseBranches.includes(baseBranch)) {
-        baseLabels.forEach((baseLabel) => labels.push(baseLabel));
+        baseLabels.forEach((baseLabel) => newLabels.push(baseLabel));
       }
     }
 
@@ -69,11 +70,17 @@ async function run() {
 
     core.info(`Current Labels: ${JSON.stringify(currentLabels, null, 2)}`);
     core.info(`Default Labels: ${JSON.stringify(defaultLabels, null, 2)}`);
-    core.info(`New Labels: ${JSON.stringify(labels, null, 2)}`);
-    const newLabels = currentLabels
-      .filter((currentLabel) => !labels.includes(currentLabel))
-      .filter((newLabel) => !defaultLabels.includes(newLabel));
-    core.info(`Adding Labels: ${newLabels}`);
+    core.info(`New Labels: ${JSON.stringify(newLabels, null, 2)}`);
+    const currentDefaultLabels = currentDefaultLabels.filter(
+      (currentLabel) => defaultLabels.includes(currentLabel)
+    );
+    core.info(`Current default Labels: ${JSON.stringify(currentDefaultLabels, null, 2)}`);
+    const labelsToRemove = currentDefaultLabels.filter(
+      (currentDefaultLabel) => !newLabels.includes(currentDefaultLabel)
+    );
+    core.info(`Labels to remove: ${JSON.stringify(filteredLabels, null, 2)}`);
+    const labelsToAdd =  newLabels.filter(newLabel => !currentDefaultLabels.includes(newLabel))
+    core.info(`Adding Labels: ${labelsToAdd}`);
 
     if (newLabels) {
       await octokit.issues.addLabels({
