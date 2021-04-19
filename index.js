@@ -86,15 +86,28 @@ async function run() {
     );
     core.info(`Adding Labels: ${labelsToAdd}`);
 
-    if (newLabels) {
+    if (labelsToAdd) {
       await octokit.issues.addLabels({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         issue_number: github.context.payload.pull_request.number,
-        labels: newLabels,
+        labels: labelsToAdd,
       });
     } else {
       core.info("No assignable labels were detected.");
+    }
+
+    if (labelsToRemove) {
+      for (const labelToremove of labelsToRemove) {
+        await octokit.issues.removeLabel({
+          owner: github.context.repo.owner,
+          repo: github.context.repo.repo,
+          issue_number: github.context.payload.pull_request.number,
+          name: labelToremove,
+        });
+      }
+    } else {
+      core.info("No removable labels were detected.");
     }
   } catch (error) {
     core.error(error);
