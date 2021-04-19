@@ -71,15 +71,19 @@ async function run() {
     core.info(`Current Labels: ${JSON.stringify(currentLabels, null, 2)}`);
     core.info(`Default Labels: ${JSON.stringify(defaultLabels, null, 2)}`);
     core.info(`New Labels: ${JSON.stringify(newLabels, null, 2)}`);
-    const currentDefaultLabels = currentLabels.filter(
-      (currentLabel) => defaultLabels.includes(currentLabel)
+    const currentDefaultLabels = currentLabels.filter((currentLabel) =>
+      defaultLabels.includes(currentLabel)
     );
-    core.info(`Current default Labels: ${JSON.stringify(currentDefaultLabels, null, 2)}`);
+    core.info(
+      `Current default Labels: ${JSON.stringify(currentDefaultLabels, null, 2)}`
+    );
     const labelsToRemove = currentDefaultLabels.filter(
       (currentDefaultLabel) => !newLabels.includes(currentDefaultLabel)
     );
-    core.info(`Labels to remove: ${JSON.stringify(filteredLabels, null, 2)}`);
-    const labelsToAdd =  newLabels.filter(newLabel => !currentDefaultLabels.includes(newLabel))
+    core.info(`Labels to remove: ${JSON.stringify(labelsToRemove, null, 2)}`);
+    const labelsToAdd = newLabels.filter(
+      (newLabel) => !currentDefaultLabels.includes(newLabel)
+    );
     core.info(`Adding Labels: ${labelsToAdd}`);
 
     if (newLabels) {
