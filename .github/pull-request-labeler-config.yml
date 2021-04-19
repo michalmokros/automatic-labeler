@@ -1,7 +1,8 @@
 labels:
   feature: 'feat[(|:]'
   fix: 'fix[(|:]'
+  documentation: 'docs[(|:]'
 
 base: 
   branches: ['main']
-  labels: ['in PR chain']
+  labels: ['In PR Chain']

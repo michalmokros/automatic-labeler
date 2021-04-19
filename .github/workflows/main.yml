@@ -10,6 +10,8 @@ jobs:
     steps:
     - name: Applying labels to Pull Request
       id: labeling-pr
-      uses: michalmokros/pull-request-labeler@main
+      uses: michalmokros/pull-request-labeler@v1
+      with:
+        configuration-path: '.github/pull-request-labeler-config.yml'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
