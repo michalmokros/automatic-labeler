@@ -71,26 +71,43 @@ async function run() {
     core.info(`Current Labels: ${JSON.stringify(currentLabels, null, 2)}`);
     core.info(`Default Labels: ${JSON.stringify(defaultLabels, null, 2)}`);
     core.info(`New Labels: ${JSON.stringify(newLabels, null, 2)}`);
-    const currentDefaultLabels = currentDefaultLabels.filter(
-      (currentLabel) => defaultLabels.includes(currentLabel)
+    const currentDefaultLabels = currentLabels.filter((currentLabel) =>
+      defaultLabels.includes(currentLabel)
     );
-    core.info(`Current default Labels: ${JSON.stringify(currentDefaultLabels, null, 2)}`);
+    core.info(
+      `Current default Labels: ${JSON.stringify(currentDefaultLabels, null, 2)}`
+    );
     const labelsToRemove = currentDefaultLabels.filter(
       (currentDefaultLabel) => !newLabels.includes(currentDefaultLabel)
     );
-    core.info(`Labels to remove: ${JSON.stringify(filteredLabels, null, 2)}`);
-    const labelsToAdd =  newLabels.filter(newLabel => !currentDefaultLabels.includes(newLabel))
+    core.info(`Labels to remove: ${JSON.stringify(labelsToRemove, null, 2)}`);
+    const labelsToAdd = newLabels.filter(
+      (newLabel) => !currentDefaultLabels.includes(newLabel)
+    );
     core.info(`Adding Labels: ${labelsToAdd}`);
 
-    if (newLabels) {
+    if (labelsToAdd) {
       await octokit.issues.addLabels({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         issue_number: github.context.payload.pull_request.number,
-        labels: newLabels,
+        labels: labelsToAdd,
       });
     } else {
       core.info("No assignable labels were detected.");
+    }
+
+    if (labelsToRemove) {
+      for (const labelToremove of labelsToRemove) {
+        await octokit.issues.removeLabel({
+          owner: github.context.repo.owner,
+          repo: github.context.repo.repo,
+          issue_number: github.context.payload.pull_request.number,
+          name: labelToremove,
+        });
+      }
+    } else {
+      core.info("No removable labels were detected.");
     }
   } catch (error) {
     core.error(error);

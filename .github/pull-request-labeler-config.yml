@@ -3,5 +3,5 @@ labels:
   fix: 'fix[(|:]'
 
 base: 
-  branches: ['master']
+  branches: ['main']
   labels: ['in PR chain']
