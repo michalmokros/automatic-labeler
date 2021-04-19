@@ -4,7 +4,7 @@ author: 'Michal Mokros'
 inputs:
   configuration-path:
     description: 'The path for the configuration of labels, default is .github/pull-request-labeler-config.yml'
-    required: false
+    required: true
     default: '.github/pull-request-labeler-config.yml'
 branding:
   icon: 'flag'
