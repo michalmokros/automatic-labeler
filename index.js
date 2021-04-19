@@ -1,6 +1,7 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
 const yaml = require("js-yaml");
+const _ = require("lodash");
 
 async function run() {
   try {
@@ -35,38 +36,58 @@ async function run() {
     );
     core.info(`Loaded config: ${JSON.stringify(config, null, 2)}`);
 
-    const labels = [];
-    const defaultLabels = Object.keys(config.labels)
+    const newLabels = [];
+    const defaultLabels = Object.keys(config.labels);
     for (const [key, value] of Object.entries(config.labels)) {
       if (title.match(new RegExp("^" + value, "g"))) {
-        labels.push(key);
+        newLabels.push(key);
       }
     }
 
     if (config.base) {
-      core.info(`Base branch specified, adding chain labels. ${JSON.stringify(config.base, null, 2)}`)
+      core.info(
+        `Base branch specified, adding chain labels. ${JSON.stringify(
+          config.base,
+          null,
+          2
+        )}`
+      );
       const { branches: baseBranches, labels: baseLabels } = config.base;
+      defaultLabels.push(...baseLabels);
 
       if (!baseBranches.includes(baseBranch)) {
-        baseLabels.forEach((baseLabel) => labels.push(baseLabel));
+        baseLabels.forEach((baseLabel) => newLabels.push(baseLabel));
       }
     }
 
-    const currentLabels = await octokit.issues.listLabelsOnIssue({
+    let currentLabels = await octokit.issues.listLabelsOnIssue({
       issue_number: github.context.payload.pull_request.number,
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
-    })
+    });
 
-    core.info(`Current Labels: ${currentLabels}`);
-    core.info(`Adding Labels: ${labels}`);
+    currentLabels = currentLabels.data.map((entry) => entry.name);
 
-    if (labels) {
+    core.info(`Current Labels: ${JSON.stringify(currentLabels, null, 2)}`);
+    core.info(`Default Labels: ${JSON.stringify(defaultLabels, null, 2)}`);
+    core.info(`New Labels: ${JSON.stringify(newLabels, null, 2)}`);
+    const currentDefaultLabels = currentDefaultLabels.filter(
+      (currentLabel) => defaultLabels.includes(currentLabel)
+    );
+    core.info(`Current default Labels: ${JSON.stringify(currentDefaultLabels, null, 2)}`);
+    const labelsToRemove = currentDefaultLabels.filter(
+      (currentDefaultLabel) => !newLabels.includes(currentDefaultLabel)
+    );
+    core.info(`Labels to remove: ${JSON.stringify(filteredLabels, null, 2)}`);
+    const labelsToAdd =  newLabels.filter(newLabel => !currentDefaultLabels.includes(newLabel))
+    core.info(`Adding Labels: ${labelsToAdd}`);
+
+    if (newLabels) {
       await octokit.issues.addLabels({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         issue_number: github.context.payload.pull_request.number,
-        labels: labels,
+        labels: newLabels,
       });
     } else {
       core.info("No assignable labels were detected.");
@@ -92,13 +113,6 @@ async function getConfig(github, path, { owner, repo }, ref) {
   } catch (error) {
     core.setFailed(error.message);
   }
-}
-
-function loadBase(base) {
-  return {
-    baseBranches: base.branch,
-    baseLabels: base.labels,
-  };
 }
 
 run();
