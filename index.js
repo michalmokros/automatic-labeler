@@ -1,7 +1,6 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
 const yaml = require("js-yaml");
-const _ = require("lodash");
 
 async function run() {
   try {
@@ -34,7 +33,8 @@ async function run() {
       github.context.repo,
       github.context.payload.pull_request.head.ref
     );
-    core.info(`Loaded config: ${JSON.stringify(config, null, 2)}`);
+
+    core.debug(`Loaded config: ${JSON.stringify(config, null, 2)}`);
 
     const newLabels = [];
     const defaultLabels = Object.keys(config.labels);
@@ -45,12 +45,8 @@ async function run() {
     }
 
     if (config.base) {
-      core.info(
-        `Base branch specified, adding chain labels. ${JSON.stringify(
-          config.base,
-          null,
-          2
-        )}`
+      core.debug(
+        `Base branch specified. ${JSON.stringify(config.base, null, 2)}`
       );
       const { branches: baseBranches, labels: baseLabels } = config.base;
       defaultLabels.push(...baseLabels);
@@ -67,24 +63,20 @@ async function run() {
     });
 
     currentLabels = currentLabels.data.map((entry) => entry.name);
-
-    core.info(`Current Labels: ${JSON.stringify(currentLabels, null, 2)}`);
-    core.info(`Default Labels: ${JSON.stringify(defaultLabels, null, 2)}`);
-    core.info(`New Labels: ${JSON.stringify(newLabels, null, 2)}`);
     const currentDefaultLabels = currentLabels.filter((currentLabel) =>
       defaultLabels.includes(currentLabel)
     );
-    core.info(
-      `Current default Labels: ${JSON.stringify(currentDefaultLabels, null, 2)}`
+    core.debug(
+      `Current default labels: ${JSON.stringify(currentDefaultLabels, null, 2)}`
     );
     const labelsToRemove = currentDefaultLabels.filter(
       (currentDefaultLabel) => !newLabels.includes(currentDefaultLabel)
     );
-    core.info(`Labels to remove: ${JSON.stringify(labelsToRemove, null, 2)}`);
+    core.debug(`Labels to remove: ${JSON.stringify(labelsToRemove, null, 2)}`);
     const labelsToAdd = newLabels.filter(
       (newLabel) => !currentDefaultLabels.includes(newLabel)
     );
-    core.info(`Adding Labels: ${JSON.stringify(labelsToAdd, null, 2)}}`);
+    core.debug(`Labels to add: ${JSON.stringify(labelsToAdd, null, 2)}}`);
 
     if (labelsToAdd && labelsToAdd.length) {
       await octokit.issues.addLabels({
@@ -93,6 +85,7 @@ async function run() {
         issue_number: github.context.payload.pull_request.number,
         labels: labelsToAdd,
       });
+      core.info(`Added labels: ${labelsToAdd}`);
     } else {
       core.info("No assignable labels were detected.");
     }
@@ -106,6 +99,7 @@ async function run() {
           name: labelToremove,
         });
       }
+      core.info(`Removed labels: ${labelsToRemove}`);
     } else {
       core.info("No removable labels were detected.");
     }
