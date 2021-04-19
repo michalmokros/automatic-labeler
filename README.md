@@ -1,20 +1,23 @@
-# pull-request-labeler
+# Pull Request Labeler
 This is a GitHub Action for Automatic Labeling of GitHub Issues and Pull Requests
 
 ## Inputs
 
-### `who-to-greet`
+### `configuration-path`
 
-**Required** The name of the person to greet. Default `"World"`.
-
-## Outputs
-
-### `time`
-
-The time we greeted you.
+**Required** The name of the file where configuration is specified. Default location and name: `".github/pull-request-labeler-config.yml"`.
 
 ## Example usage
 
-uses: actions/hello-world-javascript-action@v1.1
-with:
-  who-to-greet: 'Mona the Octocat'
+    uses: michalmokros/pull-request-labeler@v1
+    with:
+      configuration-path: '.github/pull-request-labeler-config.yml'
+
+### Example of configuration-path
+    labels:
+      feature: 'feat[(|:]'
+      fix: 'fix[(|:]'
+
+    base: 
+      branches: ['main']
+      labels: ['in PR chain']
