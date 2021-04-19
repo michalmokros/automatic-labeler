@@ -7,3 +7,4 @@ console.log("Sixth try with load");
 console.log("First try with new load");
 console.log("Running again");
 console.log("Running again");
+console.log("Running again");
