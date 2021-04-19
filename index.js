@@ -84,9 +84,9 @@ async function run() {
     const labelsToAdd = newLabels.filter(
       (newLabel) => !currentDefaultLabels.includes(newLabel)
     );
-    core.info(`Adding Labels: ${labelsToAdd}`);
+    core.info(`Adding Labels: ${JSON.stringify(labelsToAdd, null, 2)}}`);
 
-    if (labelsToAdd) {
+    if (labelsToAdd && labelsToAdd.length) {
       await octokit.issues.addLabels({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
@@ -97,7 +97,7 @@ async function run() {
       core.info("No assignable labels were detected.");
     }
 
-    if (labelsToRemove) {
+    if (labelsToRemove && labelsToRemove.length) {
       for (const labelToremove of labelsToRemove) {
         await octokit.issues.removeLabel({
           owner: github.context.repo.owner,
