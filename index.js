@@ -34,6 +34,11 @@ async function run() {
       github.context.payload.pull_request.head.ref
     );
 
+    if (!config) {
+      core.info(`Could not load configuration.`);
+      return;
+    }
+
     core.debug(`Loaded config: ${JSON.stringify(config, null, 2)}`);
 
     const newLabels = [];
