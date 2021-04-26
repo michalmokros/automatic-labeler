@@ -34,11 +34,6 @@ async function run() {
       github.context.payload.pull_request.head.ref
     );
 
-    if (!config) {
-      core.info(`Could not load configuration.`);
-      return;
-    }
-
     core.debug(`Loaded config: ${JSON.stringify(config, null, 2)}`);
 
     const newLabels = [];
@@ -110,7 +105,7 @@ async function run() {
     }
   } catch (error) {
     core.error(error);
-    core.setFailed(error.message);
+    core.setOutput(error.message);
   }
 }
 
@@ -127,7 +122,8 @@ async function getConfig(github, path, { owner, repo }, ref) {
       yaml.load(Buffer.from(response.data.content, "base64").toString()) || {}
     );
   } catch (error) {
-    core.setFailed(error.message);
+    core.error(error);
+    core.setOutput(error.message);
   }
 }
 
