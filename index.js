@@ -10,6 +10,8 @@ async function run() {
       );
     }
 
+    throw new Error('This error message should be printed');
+
     const github_token = process.env.GITHUB_TOKEN;
     const octokit = github.getOctokit((token = github_token));
     const configPath = core.getInput("configuration-path", { required: true });
